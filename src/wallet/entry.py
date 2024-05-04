@@ -15,7 +15,7 @@ CATEGORY = {
 }
 
 
-@dataclass
+@dataclass(frozen=True)
 class WalletEntry:
     """ Класс, представляющий запись в кошельке. """
     date: datetime.date
@@ -25,7 +25,7 @@ class WalletEntry:
 
     def __str__(self):
         return "Дата: {date}\nКатегория: {cat}\nСумма: {amt}\n" \
-               "Описание:{desc}".format(
+               "Описание: {desc}".format(
                     date=self.date,
                     cat=CATEGORY[self.category],
                     amt=round(self.amount, 2),
