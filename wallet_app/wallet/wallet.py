@@ -2,8 +2,8 @@ import datetime
 from enum import IntEnum
 from typing import Any, Dict, List, Optional, Tuple
 
-from src.utils import filters
-from src.wallet.entry import EntryCategory, WalletEntry
+from wallet_app.utils import filters
+from wallet_app.wallet.entry import EntryCategory, WalletEntry
 
 
 class SearchField(IntEnum):
@@ -25,6 +25,10 @@ class Wallet:
     total: Dict[EntryCategory, float]
 
     def __init__(self, entries: Optional[List[WalletEntry]] = None):
+        """
+        Args:
+            entries (List[WalletEntry]): список записей кошелька.
+        """
         self.entries = {}
         self.total = {
             EntryCategory.Income: 0,
@@ -140,5 +144,7 @@ class Wallet:
                 )
                 for entry in entries
             ]
-
-        return Wallet(entries)
+        try:
+            return Wallet(entries)
+        except Exception as e:
+            print(e)

@@ -1,7 +1,7 @@
 import datetime
 from typing import Any, Callable, Tuple
 
-from src.wallet.entry import EntryCategory, WalletEntry
+from wallet_app.wallet.entry import EntryCategory, WalletEntry
 
 
 def category_filter(value: Any) -> Callable:

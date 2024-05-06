@@ -4,9 +4,14 @@ from typing import Any, Dict, Optional
 
 
 class JsonHandler:
+    """ Класс, отвечающий за сохранения/загрузку Json файлов. """
     default_path: str
 
     def __init__(self, file_path: str):
+        """
+        Args:
+            file_path (str): пусть для сохранения/загрузки файла по умолчанию.
+        """
         if os.path.isabs(file_path):
             self.default_path = file_path
         else:
