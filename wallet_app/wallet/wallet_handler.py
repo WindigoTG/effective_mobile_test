@@ -1,9 +1,10 @@
 from typing import Callable, Dict
 
 from wallet_app.menu.main_menu import MainMenu, MenuOptions
+from wallet_app.menu.entries_menu import EntriesMenu
 from wallet_app.utils.json_handler import JsonHandler
-from wallet_app.wallet.entry import EntryCategory, WalletEntry
-from wallet_app.wallet.wallet import SearchField, Wallet
+from wallet_app.wallet.entry import WalletEntry
+from wallet_app.wallet.wallet import Wallet
 
 
 class WalletHandler:
@@ -22,7 +23,7 @@ class WalletHandler:
             MenuOptions.ShowBalance: self._show_balance,
             MenuOptions.AddEntry: self._add_entry,
             MenuOptions.EditEntry: self._edit_entry,
-            MenuOptions.FindEntry: self._find_entry,
+            MenuOptions.FindEntry: self._find_entries,
             MenuOptions.DisplayEntries: self._show_all_entries,
             MenuOptions.Save: self._save_current_wallet,
             MenuOptions.SaveAs: self._save_wallet_as,
@@ -63,20 +64,72 @@ class WalletHandler:
         if not self.wallet:
             return
 
+        entry_data = EntriesMenu.get_data_for_new_entry()
+
+        if not entry_data:
+            return
+
+        new_entry = WalletEntry(**entry_data)
+
+        self.wallet.add_entry(new_entry)
+        MainMenu.print_message("Новая запись добавлена.")
+
     def _edit_entry(self) -> None:
         """ Изменение записи в кошельке. """
         if not self.wallet:
             return
 
-    def _find_entry(self) -> None:
-        """ Поиск записи в кошельке. """
+        if not self.wallet.entries:
+            MainMenu.print_message("Нет записей для изменения.")
+            return
+
+        entry_idx = EntriesMenu.get_entry_number()
+
+        entry = self.wallet[entry_idx]
+        if not entry:
+            MainMenu.print_message("Запись не найдена.")
+            return
+
+        updated_data = EntriesMenu.get_data_to_edit_entry(entry)
+
+        updated_entry = WalletEntry(**updated_data)
+        self.wallet[entry_idx] = updated_entry
+        MainMenu.print_message(
+            f"Запись номер {entry_idx} обновлена.",
+        )
+
+    def _find_entries(self) -> None:
+        """ Поиск записей в кошельке. """
         if not self.wallet:
             return
+
+        if not self.wallet.entries:
+            MainMenu.print_message("Нет записей для поиска.")
+            return
+
+        search_query = EntriesMenu.get_search_query()
+
+        if not search_query:
+            return
+
+        entries = self.wallet.find_entries(*search_query)
+
+        if not entries:
+            MainMenu.print_message("Не найдено подходящих записей.")
+
+        EntriesMenu.show_entries(entries)
 
     def _show_all_entries(self) -> None:
         """ Показать все записи в кошельке. """
         if not self.wallet:
             return
+
+        if not self.wallet.entries:
+            MainMenu.print_message("Нет записей для отображения.")
+            return
+
+        entries = self.wallet[0:]
+        EntriesMenu.show_entries(entries)
 
     def _save_current_wallet(self) -> None:
         """ Сохранение текущего кошелька по ранее открытому пути. """
@@ -113,10 +166,10 @@ class WalletHandler:
             message = "Не удалось сохранить кошелёк {path}"
 
         MainMenu.print_message(
-            message.format(
-                path=path if path else '',
+                message.format(
+                    path=path if path else '',
+                )
             )
-        )
 
     def _load_default_wallet(self) -> None:
         """ Загрузка кошелька по умолчанию. """
