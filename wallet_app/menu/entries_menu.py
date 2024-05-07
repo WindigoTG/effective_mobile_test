@@ -228,15 +228,7 @@ class EntriesMenu:
 
         while True:
             for number, entry in entries[first_index: first_index + per_page]:
-                message = "{num}) Дата: {date}\nКатегория: {cat}\n" \
-                          "Сумма: {amt}\nОписание: {desc}".format(
-                                num=number+1,
-                                date=entry.date,
-                                cat=CATEGORY[entry.category],
-                                amt=entry.amount,
-                                desc=entry.description,
-                            )
-                print(message+"\n")
+                print(f"{number}) {entry}\n")
 
             first_index += per_page
             if first_index >= len(entries):
