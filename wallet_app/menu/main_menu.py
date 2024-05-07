@@ -1,4 +1,6 @@
 from enum import Enum
+import sys
+from typing import TextIO, Optional
 
 
 class MenuOptions(Enum):
@@ -45,12 +47,16 @@ class MainMenu:
         print("\nq - Выход")
 
     @staticmethod
-    def get_user_menu_choice(truncated: bool = False) -> MenuOptions:
+    def get_user_menu_choice(
+        truncated: bool = False,
+        input_stream: Optional[TextIO] = sys.stdin,
+    ) -> MenuOptions:
         """
         Запросить выбор действия в меню у пользователя.
 
         Args:
              truncated (bool): выполнить запрос для сокращенного меню.
+             input_stream (Optional[TextIO]): поток ввода данных.
 
         Returns:
             MenuOptions
@@ -60,11 +66,12 @@ class MainMenu:
         choice = None
         while not choice:
             try:
-                choice = input().lower()
+                choice = input_stream.readline().rstrip('\n')
                 if truncated and choice.isnumeric():
                     choice = str(int(choice) + 7)
                 choice = MenuOptions(choice)
             except ValueError:
+                sys.stdout
                 print("Неверный выбор.\n")
                 choice = None
                 MainMenu.print_main_menu(truncated)
@@ -82,13 +89,16 @@ class MainMenu:
         print(message+"\n")
 
     @staticmethod
-    def get_filepath(loading: bool = False) -> str:
+    def get_filepath(
+        loading: bool = False,
+        input_stream: Optional[TextIO] = sys.stdin,
+    ) -> str:
         """
         Запросить у пользователя путь для сохранения/загрузки файла.
 
         Args:
             loading (bool): отобразить запрос для загрузки.
-
+            input_stream (Optional[TextIO]): поток ввода данных.
         Return:
             str
         """
@@ -98,4 +108,4 @@ class MainMenu:
         else:
             print("Введите путь и имя файла для сохранения.")
         print("(пустой ввод - использование значения по умолчанию)")
-        return input()
+        return input_stream.readline().rstrip('\n')
