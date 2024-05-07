@@ -79,13 +79,13 @@ class WalletHandler:
         if not self.wallet:
             return
 
-        if not self.wallet.entries:
+        if not len(self.wallet):
             MainMenu.print_message("Нет записей для изменения.")
             return
 
-        entry_idx = EntriesMenu.get_entry_number()
+        entry_idx = EntriesMenu.get_entry_number() - 1
 
-        entry = self.wallet[entry_idx]
+        _, entry = self.wallet[entry_idx]
         if not entry:
             MainMenu.print_message("Запись не найдена.")
             return
@@ -103,7 +103,7 @@ class WalletHandler:
         if not self.wallet:
             return
 
-        if not self.wallet.entries:
+        if not len(self.wallet):
             MainMenu.print_message("Нет записей для поиска.")
             return
 
@@ -124,7 +124,7 @@ class WalletHandler:
         if not self.wallet:
             return
 
-        if not self.wallet.entries:
+        if not len(self.wallet):
             MainMenu.print_message("Нет записей для отображения.")
             return
 
@@ -189,7 +189,9 @@ class WalletHandler:
         """
         wallet_data = self.json_handler.load_json(path)
         if not wallet_data:
-            MainMenu.print_message("Не удалось загрузить кошелёк")
+            MainMenu.print_message(
+                "Не удалось загрузить кошелёк. Не удалось прочитать файл."
+            )
             return
 
         wallet = Wallet.from_json(wallet_data)
@@ -200,7 +202,9 @@ class WalletHandler:
                 self.wallet_path = path
             MainMenu.print_message("Кошелёк загружен.")
         else:
-            MainMenu.print_message("Не удалось загрузить кошелёк")
+            MainMenu.print_message(
+                "Не удалось загрузить кошелёк. Некорректные данные."
+            )
 
     def _create_new_wallet(self) -> None:
         """ Создание нового кошелька. """

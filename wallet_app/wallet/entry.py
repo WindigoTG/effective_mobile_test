@@ -23,6 +23,13 @@ class WalletEntry:
     amount: float
     description: str
 
+    def __post_init__(self):
+        if not (isinstance(self.amount, float) or isinstance(self.amount, int)):
+            raise ValueError("Некорректный тип поля amount")
+
+        if self.amount < 0:
+            raise ValueError("Сумма не может быть отрицательной")
+
     def __str__(self):
         return "Дата: {date}\nКатегория: {cat}\nСумма: {amt}\n" \
                "Описание: {desc}".format(

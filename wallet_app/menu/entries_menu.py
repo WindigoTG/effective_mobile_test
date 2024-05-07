@@ -180,7 +180,10 @@ class EntriesMenu:
                 return
 
             try:
-                return round(float(user_input), 2)
+                amount = round(float(user_input), 2)
+                if amount < 0:
+                    raise ValueError()
+                return amount
             except ValueError:
                 print("Некорректный ввод.\n")
 
@@ -204,6 +207,7 @@ class EntriesMenu:
                 number = int(user_input)
                 if number <= 0:
                     raise ValueError
+                return number
             except ValueError:
                 print("Некорректный ввод.\n")
 
@@ -226,7 +230,7 @@ class EntriesMenu:
             for number, entry in entries[first_index: first_index + per_page]:
                 message = "{num}) Дата: {date}\nКатегория: {cat}\n" \
                           "Сумма: {amt}\nОписание: {desc}".format(
-                                num=number,
+                                num=number+1,
                                 date=entry.date,
                                 cat=CATEGORY[entry.category],
                                 amt=entry.amount,
@@ -255,7 +259,7 @@ class EntriesMenu:
         search_field = None
         while not search_field:
             user_input = input(
-                "Выберите критерий поиска:1) Категория\n2) Дата\n3) Сумма"
+                "Выберите критерий поиска:\n1) Категория\n2) Дата\n3) Сумма\n"
             )
             if not user_input:
                 return
@@ -265,6 +269,20 @@ class EntriesMenu:
             except ValueError:
                 print("Неверный ввод.")
 
-        search_value = input("Введите значение для поиска:")
+        search_value = EntriesMenu._get_search_value(search_field)
+
+        if not search_value:
+            return
 
         return search_field, search_value
+
+    @staticmethod
+    def _get_search_value(search_field: SearchField) -> Any:
+        if search_field == SearchField.Date:
+            return EntriesMenu._get_date()
+
+        if search_field == SearchField.Category:
+            return EntriesMenu._get_category()
+
+        if search_field == SearchField.Amount:
+            return EntriesMenu._get_amount()
