@@ -1,0 +1,40 @@
+{
+  "entries": [
+    {
+      "date": "2024-05-02",
+      "category": 1,
+      "amount": 123.45,
+      "description": "Income entry 1"
+    },
+    {
+      "date": "2024-05-02",
+      "category": 2,
+      "amount": 67.89,
+      "description": "Spending entry 1"
+    },
+    {
+      "date": "2024-05-03",
+      "category": 1,
+      "amount": 384.99,
+      "description": "Income entry 2"
+    },
+    {
+      "date": "2024-05-03",
+      "category": 2,
+      "amount": 12.95,
+      "description": "Spending entry 2"
+    },
+    {
+      "date": "2024-05-04",
+      "category": 1,
+      "amount": 512.0,
+      "description": "Income entry 3"
+    },
+    {
+      "date": "2024-05-04",
+      "category": 2,
+      "amount": 59.99,
+      "description": ""
+    }
+  ]
+}
