@@ -1,4 +1,4 @@
-from wallet_app.wallet.wallet_handler import WalletHandler
+from wallet.wallet_handler import WalletHandler
 
 
 def main():

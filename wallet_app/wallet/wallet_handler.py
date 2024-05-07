@@ -1,10 +1,10 @@
 from typing import Callable, Dict
 
-from wallet_app.menu.main_menu import MainMenu, MenuOptions
-from wallet_app.menu.entries_menu import EntriesMenu
-from wallet_app.utils.json_handler import JsonHandler
-from wallet_app.wallet.entry import WalletEntry
-from wallet_app.wallet.wallet import Wallet
+from menu.main_menu import MainMenu, MenuOptions
+from menu.entries_menu import EntriesMenu
+from utils.json_handler import JsonHandler
+from wallet.entry import WalletEntry
+from wallet.wallet import Wallet
 
 
 class WalletHandler:

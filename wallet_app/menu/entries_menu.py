@@ -1,8 +1,9 @@
 from datetime import date
-from typing import Any, Dict, Optional, List, Tuple
+import sys
+from typing import Any, Dict, List, Optional, TextIO, Tuple
 
-from wallet_app.wallet.entry import CATEGORY, EntryCategory, WalletEntry
-from wallet_app.wallet.wallet import SearchField
+from wallet.entry import CATEGORY, EntryCategory, WalletEntry
+from wallet.wallet import SearchField
 
 
 class EntriesMenu:
@@ -11,27 +12,33 @@ class EntriesMenu:
     для работы с записями кошелька.
     """
     @staticmethod
-    def get_data_for_new_entry() -> Optional[Dict[str, Any]]:
+    def get_data_for_new_entry(
+        input_stream: Optional[TextIO] = sys.stdin,
+    ) -> Optional[Dict[str, Any]]:
         """
         Запросить у пользователя данные для новой записи в кошелке.
+
+        Args:
+            input_stream (Optional[TextIO]): поток ввода данных.
 
         Returns:
             Dict[str, Any] или None в случае отмены.
         """
 
-        entry_date = EntriesMenu._get_date()
+        entry_date = EntriesMenu._get_date(input_stream=input_stream)
         if not entry_date:
             return
 
-        category = EntriesMenu._get_category()
+        category = EntriesMenu._get_category(input_stream=input_stream)
         if not category:
             return
 
-        amount = EntriesMenu._get_amount()
+        amount = EntriesMenu._get_amount(input_stream=input_stream)
         if not amount:
             return
 
-        description = input("Введите описание:\n")
+        print("Введите описание:\n")
+        description = input_stream.readline().rstrip('\n')
 
         return {
             "date": entry_date,
@@ -41,36 +48,49 @@ class EntriesMenu:
         }
 
     @staticmethod
-    def get_data_to_edit_entry(entry: WalletEntry) -> Dict[str, Any]:
+    def get_data_to_edit_entry(
+        entry: WalletEntry,
+        input_stream: Optional[TextIO] = sys.stdin,
+    ) -> Dict[str, Any]:
         """
         Запросить у пользователя данные для редактирования записи в кошелке.
 
         Args:
             entry (WalletEntry): существующая запись для редактирования.
+            input_stream (Optional[TextIO]): поток ввода данных.
 
         Returns:
             Dict[str, Any]
         """
 
-        entry_date = EntriesMenu._get_date(entry.date)
+        entry_date = EntriesMenu._get_date(
+            entry.date,
+            input_stream=input_stream,
+        )
         if not entry_date:
             entry_date = entry.date
 
-        category = EntriesMenu._get_category(entry.category)
+        category = EntriesMenu._get_category(
+            entry.category,
+            input_stream=input_stream,
+        )
         if not category:
             category = entry.category
 
-        amount = EntriesMenu._get_amount(entry.amount)
+        amount = EntriesMenu._get_amount(
+            entry.amount,
+            input_stream=input_stream,
+        )
         if not amount:
             amount = entry.amount
 
-        description = input("Введите описание:\n")
+        print("Введите описание:\n")
+        description = input_stream.readline().rstrip('\n')
 
         if not description:
             while True:
-                user_input = input(
-                    "1) Очистить описание\n2) Не менять описание"
-                )
+                print("1) Очистить описание\n2) Не менять описание")
+                user_input = input_stream.readline().rstrip('\n')
                 if user_input not in ["1", "2"]:
                     continue
 
@@ -86,12 +106,16 @@ class EntriesMenu:
         }
 
     @staticmethod
-    def _get_date(prev_date: Optional[date] = None) -> Optional[date]:
+    def _get_date(
+        prev_date: Optional[date] = None,
+        input_stream: Optional[TextIO] = sys.stdin,
+    ) -> Optional[date]:
         """
         Запросить у пользователя новую дату.
 
         Args:
             prev_date (date) предыдущая дата.
+            input_stream (Optional[TextIO]): поток ввода данных.
 
         Returns:
             datetime.date или None в случае отмены.
@@ -106,9 +130,9 @@ class EntriesMenu:
             print(
                 "(пустой ввод - {term})".format(
                     term="пропустить" if prev_date else "отмена",
-                )
+                ),
             )
-            user_input = input()
+            user_input = input_stream.readline().rstrip('\n')
             if not user_input:
                 return
 
@@ -119,13 +143,15 @@ class EntriesMenu:
 
     @staticmethod
     def _get_category(
-        prev_category: Optional[EntryCategory] = None
+        prev_category: Optional[EntryCategory] = None,
+        input_stream: Optional[TextIO] = sys.stdin,
     ) -> Optional[EntryCategory]:
         """
         Запросить у пользователя категорию записи.
 
         Args:
             prev_category (EntryCategory) предыдущая категория.
+            input_stream (Optional[TextIO]): поток ввода данных.
 
         Returns:
             EntryCategory или None в случае отмены.
@@ -143,7 +169,7 @@ class EntriesMenu:
                     term="пропустить" if prev_category else "отмена",
                 )
             )
-            user_input = input()
+            user_input = input_stream.readline().rstrip('\n')
             if not user_input:
                 return
 
@@ -153,12 +179,16 @@ class EntriesMenu:
                 print("Некорректный ввод.\n")
 
     @staticmethod
-    def _get_amount(prev_amount: Optional[float] = None) -> Optional[float]:
+    def _get_amount(
+        prev_amount: Optional[float] = None,
+        input_stream: Optional[TextIO] = sys.stdin,
+    ) -> Optional[float]:
         """
         Запросить у пользователя сумму.
 
         Args:
             prev_amount (float) предыдущая сумма.
+            input_stream (Optional[TextIO]): поток ввода данных.
 
         Returns:
             float или None в случае отмены.
@@ -175,7 +205,7 @@ class EntriesMenu:
                     term="пропустить" if prev_amount else "отмена",
                 )
             )
-            user_input = input()
+            user_input = input_stream.readline().rstrip('\n')
             if not user_input:
                 return
 
@@ -188,9 +218,14 @@ class EntriesMenu:
                 print("Некорректный ввод.\n")
 
     @staticmethod
-    def get_entry_number() -> Optional[int]:
+    def get_entry_number(
+        input_stream: Optional[TextIO] = sys.stdin,
+    ) -> Optional[int]:
         """
         Запросить у пользователя номер записи.
+
+        Args:
+            input_stream (Optional[TextIO]): поток ввода данных.
 
         Returns:
             int или None в случае отмены.
@@ -199,7 +234,7 @@ class EntriesMenu:
         while True:
             print("Введите номер записи:")
             print("(пустой ввод - отмена)")
-            user_input = input()
+            user_input = input_stream.readline().rstrip('\n')
             if not user_input:
                 return
 
@@ -240,9 +275,14 @@ class EntriesMenu:
                 break
 
     @staticmethod
-    def get_search_query() -> Optional[Tuple[SearchField, str]]:
+    def get_search_query(
+        input_stream: Optional[TextIO] = sys.stdin,
+    ) -> Optional[Tuple[SearchField, str]]:
         """
         Запросить данные для поиска записей у пользователя.
+
+        Args:
+            input_stream (Optional[TextIO]): поток ввода данных.
 
         Returns:
             Optional[Tuple[SearchField, str]] или None в случае отмены.
@@ -250,9 +290,10 @@ class EntriesMenu:
 
         search_field = None
         while not search_field:
-            user_input = input(
-                "Выберите критерий поиска:\n1) Категория\n2) Дата\n3) Сумма\n"
+            print(
+                "Выберите критерий поиска:\n1) Категория\n2) Дата\n3) Сумма\n",
             )
+            user_input = input_stream.readline().rstrip('\n')
             if not user_input:
                 return
 
@@ -261,7 +302,10 @@ class EntriesMenu:
             except ValueError:
                 print("Неверный ввод.")
 
-        search_value = EntriesMenu._get_search_value(search_field)
+        search_value = EntriesMenu._get_search_value(
+            search_field,
+            input_stream=input_stream,
+        )
 
         if not search_value:
             return
@@ -269,12 +313,15 @@ class EntriesMenu:
         return search_field, search_value
 
     @staticmethod
-    def _get_search_value(search_field: SearchField) -> Any:
+    def _get_search_value(
+        search_field: SearchField,
+        input_stream: Optional[TextIO] = sys.stdin,
+    ) -> Any:
         if search_field == SearchField.Date:
-            return EntriesMenu._get_date()
+            return EntriesMenu._get_date(input_stream=input_stream)
 
         if search_field == SearchField.Category:
-            return EntriesMenu._get_category()
+            return EntriesMenu._get_category(input_stream=input_stream)
 
         if search_field == SearchField.Amount:
-            return EntriesMenu._get_amount()
+            return EntriesMenu._get_amount(input_stream=input_stream)

@@ -4,8 +4,8 @@ sys.path.append("..")
 
 from datetime import date
 
-from wallet_app.wallet.entry import EntryCategory, WalletEntry
-from wallet_app.wallet.wallet import SearchField, Wallet
+from wallet.entry import EntryCategory, WalletEntry
+from wallet.wallet import SearchField, Wallet
 
 
 class TestWallet(unittest.TestCase):
@@ -15,7 +15,7 @@ class TestWallet(unittest.TestCase):
             WalletEntry(
                 date=date.fromisoformat("2024-05-02"),
                 category= EntryCategory.Income,
-                amount= 123.45,
+                amount=123.45,
                 description="test entry 1",
             ),
             WalletEntry(
@@ -93,14 +93,14 @@ class TestWallet(unittest.TestCase):
 
     def test_wallet_from_json(self):
         wallet_data = {
-            "entries" : [
-                self.entries[0].to_json(),
+            "entries": [
+                self.entries[4].to_json(),
             ]
         }
         wallet = Wallet.from_json(wallet_data)
         self.assertIsInstance(wallet, Wallet)
         self.assertEqual(len(wallet), 1)
-        self.assertEqual(wallet[0], (0, self.entries[0]))
+        self.assertEqual(wallet[0], (0, self.entries[4]))
 
     def test_wallet_balance(self):
         initial_balance = self.blank_wallet.balance

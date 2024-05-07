@@ -1,6 +1,6 @@
 from enum import Enum
 import sys
-from typing import TextIO, Optional
+from typing import Optional, TextIO
 
 
 class MenuOptions(Enum):

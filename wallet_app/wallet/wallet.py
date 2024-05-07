@@ -2,8 +2,8 @@ import datetime
 from enum import IntEnum
 from typing import Any, Dict, List, Optional, Tuple
 
-from wallet_app.utils import filters
-from wallet_app.wallet.entry import EntryCategory, WalletEntry
+from utils import filters
+from wallet.entry import EntryCategory, WalletEntry
 
 
 class SearchField(IntEnum):
